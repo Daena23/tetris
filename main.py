@@ -1,7 +1,6 @@
 import time
 from typing import List, Optional
 
-from configuration import CELL_VALUE
 from figures import Figure
 from game_loop import check_loss, create_new_figure, remove_filled_layers, update_active_figure, update_field, visualize
 from init_functions import initialize_game
@@ -26,6 +25,7 @@ def main():
                 active_figure = create_new_figure()
                 all_figures.append(active_figure)
                 you_loose = check_loss(field, active_figure)
+
         print('--------')
         # game_iteration += 1
         time.sleep(0.4)

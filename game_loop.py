@@ -1,4 +1,5 @@
 import random
+import time
 from copy import deepcopy
 from typing import List, Optional, Union
 
@@ -66,7 +67,7 @@ def update_active_figure(field: List[List[int]], active_figure: Figure) -> Optio
 
 
 def create_new_figure() -> Figure:
-    return random.choice((Rectangle(), Tetris(), Angle()))  # Block()cc
+    return random.choice((Rectangle(), Tetris(), Angle()))  # Block()
 
 
 def check_loss(field: List[List[int]], active_figure: Figure) -> bool:
@@ -78,9 +79,9 @@ def check_loss(field: List[List[int]], active_figure: Figure) -> bool:
 
 def find_filled_rows(field: List[List[int]]) -> List[int]:
     row_to_remove = []
-    for row in field:
-        if all([cell == CELL_VALUE['Figure'] for cell in row]):
-            row_to_remove.append(field.index(row))
+    for row_num in range(FIELD_SIZE[0]):
+        if all([cell == CELL_VALUE['Figure'] for cell in field[row_num]]):
+            row_to_remove.append(row_num)
     return row_to_remove
 
 
@@ -92,6 +93,7 @@ def remove_cells(figure: Figure, coord_to_remove: List[List[int]]) -> None:
 
 def remove_filled_layers(field, all_figures):
     row_to_remove = find_filled_rows(field)
-    coord_to_remove = [[row_num, n] for n in range(FIELD_SIZE[1]) for row_num in row_to_remove]
+    coord_to_remove = [[row_num, cell_num] for cell_num in range(FIELD_SIZE[1]) for row_num in row_to_remove]
     for figure in all_figures:
         remove_cells(figure, coord_to_remove)
+    time.sleep(0.6)

@@ -87,7 +87,8 @@ class Angle(Figure):
 class Block(Figure):
     @property
     def relative_coordinates(self) -> List[List[int]]:
-        return [[0, -2], [0, -1], [0, 0], [0, 1], [0, 2], [0, 3], [0, 4]]
+        return [[0, -2], [0, -1], [0, 0], [0, 1], [0, 2], [0, 3], [0, 4],
+                [1, -2], [1, -1], [1, 0], [1, 1], [1, 2], [1, 3], [1, 4]]
 
     @property
     def relative_stuck_coord(self) -> List[List[int]]:
