@@ -82,3 +82,17 @@ class Angle(Figure):
 
     def __init__(self):
         super().__init__()
+
+
+class Block(Figure):
+    @property
+    def relative_coordinates(self) -> List[List[int]]:
+        return [[0, -2], [0, -1], [0, 0], [0, 1], [0, 2], [0, 3], [0, 4]]
+
+    @property
+    def relative_stuck_coord(self) -> List[List[int]]:
+        return [[row, column] for row, column in self.relative_coordinates
+                if [row + FALL_COORD[0], column] not in self.relative_coordinates]
+
+    def __init__(self):
+        super().__init__()
