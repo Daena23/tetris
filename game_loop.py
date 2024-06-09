@@ -18,7 +18,7 @@ def update_field(init_field: List[List[int]], all_figures: List[Figure]) -> List
 def place_figure(field: List[List[int]], figure: Figure) -> None:
     if figure:
         for row, column in figure.coord:
-            field[row][column] = CELL_VALUE['Figure']
+            field[row][column] = CELL_VALUE['Sketch']
 
 
 def identify_figure(cell_value: Union[int, float]) -> Union[int, float]:
@@ -27,25 +27,25 @@ def identify_figure(cell_value: Union[int, float]) -> Union[int, float]:
             return pair[0]
 
 
-def visualize(field: List[List[int]]) -> None:
-    for line_num in range(FIELD_SIZE[0]):
-        if line_num in (0, 1):  # add a condition - if the figure is two-tiered
-            print()
-            continue
-        print('□', end=' ')
-        print(' ', end='')
-        for cell in field[line_num]:
-            if cell == CELL_VALUE['Empty']:
-                print('_', end='  ')
-            else:
-                if identify_figure(cell) == 'Tetris':  # Figure.repr()
-                    print('⮟', end='  ')
-                else:
-                    print('■', end='  ')
-        print('□')
-    for cell_num in range(FIELD_SIZE[1] + 2):
-        print('□', end='  ')
-    print()
+# def visualize(field: List[List[int]]) -> None:
+#     for line_num in range(FIELD_SIZE[0]):
+#         if line_num in (0, 1):  # add a condition - if the figure is two-tiered
+#             print()
+#             continue
+#         print('□', end=' ')
+#         print(' ', end='')
+#         for cell in field[line_num]:
+#             if cell == CELL_VALUE['Empty']:
+#                 print('_', end='  ')
+#             else:
+#                 if identify_figure(cell) == 'Tetris':  # Sketch.repr()
+#                     print('⮟', end='  ')
+#                 else:
+#                     print('■', end='  ')
+#         print('□')
+#     for cell_num in range(FIELD_SIZE[1] + 2):
+#         print('□', end='  ')
+#     print()
 
 
 def is_border_contact(active_figure):
@@ -72,7 +72,7 @@ def create_new_figure() -> Figure:
 
 def check_loss(field: List[List[int]], active_figure: Figure) -> bool:
     for row, column in active_figure.coord:
-        if field[row][column] == CELL_VALUE['Figure']:
+        if field[row][column] == CELL_VALUE['Sketch']:
             return True
     return False
 
@@ -80,7 +80,7 @@ def check_loss(field: List[List[int]], active_figure: Figure) -> bool:
 def find_filled_rows(field: List[List[int]]) -> List[int]:
     row_to_remove = []
     for row_num in range(FIELD_SIZE[0]):
-        if all([cell == CELL_VALUE['Figure'] for cell in field[row_num]]):
+        if all([cell == CELL_VALUE['Sketch'] for cell in field[row_num]]):
             row_to_remove.append(row_num)
     return row_to_remove
 

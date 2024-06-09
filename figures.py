@@ -1,17 +1,18 @@
 from abc import abstractmethod
+from random import choice
 from typing import List
 
 from configuration import FALL_COORD, INIT_COORDINATES
 
 
 class Figure:
-    colors = ('red', 'blue', 'white', 'yellow', 'grey')
+    colors = ('red', 'blue', 'green', 'yellow', 'grey')
 
     def __init__(self):
         self.anchor_coord = list(INIT_COORDINATES)
         self.coord = self.find_coord()
         self.stuck_coord = self.find_stuck_coord()
-        # self.color = random.choice(Figure.colors)
+        self.color = choice(Figure.colors)
 
     @property
     @abstractmethod
