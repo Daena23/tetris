@@ -2,6 +2,8 @@ from copy import deepcopy
 from tkinter import Canvas
 from typing import List, Optional
 
+from PIL._tkinter_finder import tk
+
 from auxillary_functions import create_new_figure, initialize_game, remove_cells
 from configuration import CELL_VALUE, FALL_COORD, FIELD_SIZE, time_per_update, unit_size
 from figures import Figure
@@ -27,12 +29,21 @@ class MainField:
         self.you_loose: bool = False
         self.frame_counter = 0
         # drawing
-        
-        self.canvas.bind_all("<KeyPress-Left>", self.move_left)
-        self.canvas.bind_all("<KeyPress-Right>", self.move_right)
-        self.canvas.bind_all("<KeyPress-Up>", self.move_up)
-        self.canvas.bind_all("<KeyPress-Down>", self.move_down)
+        self.canvas.bind_all("<KeyPress-Left>", self.step_left)
+        # self.canvas.tag_bind("<KeyPress-Right>", self.move_right)
+        # self.canvas.tag_bind("<KeyPress-Up>", self.move_up)
+        # self.canvas.tag_bind("<KeyPress-Down>", self.move_down)
         self.root.after(20, self.update_game)
+
+    def step_left(self, canvas):
+        if self.active_figure:
+        # todo condition to not наползать на другие фигуры
+            if all(0 < column < FIELD_SIZE[1] for row, column in self.active_figure.find_coord()):
+                print('123', self.active_figure)
+                print(self.active_figure.coord, ' ', self.active_figure.anchor_coord)
+                self.active_figure.anchor_coord[1] -= 1
+                self.active_figure.coord = self.active_figure.find_coord()
+                print(self.active_figure.coord, ' ', self.active_figure.anchor_coord)
 
     def switch_frame(self):
         self.frame_counter += 1
@@ -57,11 +68,11 @@ class MainField:
                 self.draw_figure(figure)
             self.draw_upper_patch()  # draw
             if self.you_loose:
-                print('you_loose')
+                self.draw_you_loose()
                 return
-        for row in self.field:
-            print(row)
-        print()
+            print()
+            print('3', self.active_figure.coord, ' ', self.active_figure.anchor_coord)
+
         self.root.after(20, self.update_game)
 
     def update_field(self) -> None:
@@ -91,16 +102,14 @@ class MainField:
     def check_loss(self):
         if self.active_figure:
             for row, column in self.active_figure.coord:
-                print('int(self.field[row][column])', int(self.field[row][column]))
                 if int(self.field[row][column]) == 2:  # int(CELL_VALUE[self.active_figure.__repr__()]):
                     self.you_loose = True
-                    print('loo', self.you_loose)
                     self.active_figure = None
                     return
 
     def update_active_figure(self):
         for row, column in self.active_figure.find_stuck_coord():
-            if row < FIELD_SIZE[0] - 1:  # active figure falls on another fig
+            if row < FIELD_SIZE[0] - 1:  # active figure falls on another figure
                 if self.field[row + FALL_COORD[0]][column] != CELL_VALUE["Empty"]:
                     self.active_figure = None
                     return
@@ -123,6 +132,13 @@ class MainField:
                                      fill="white", outline="white")
         self.draw_ceiling()
 
+    def draw_you_loose(self):
+        self.canvas.create_text(MainField.hor_indent + (FIELD_SIZE[1] + 2) * unit_size / 2,
+                                (FIELD_SIZE[0] + 1.5) * unit_size,
+                                text="You loose",
+                                fill="black",
+                                font=('Helvetica 15 bold'))
+
     def draw_ceiling(self):
         self.canvas.create_line(MainField.hor_indent,
                                 2 * unit_size,
@@ -131,19 +147,24 @@ class MainField:
                                 fill="black")
 
     def draw_figure(self, figure: Figure):
+        tag = "fig"
         if figure:
             for coord in figure.coord:
                 rect = self.canvas.create_rectangle(unit_size * (coord[1] - 1),
-                                  unit_size * (coord[0] - 1),
-                                  unit_size * (coord[1]),
-                                  unit_size * (coord[0]), fill=f"{figure.color}", width=1.2, tags="active_figure")
+                                                    unit_size * (coord[0] - 1),
+                                                    unit_size * (coord[1]),
+                                                    unit_size * (coord[0]),
+                                                    fill=f"{figure.color}", width=1.2, tags=f"{tag}")
+                if figure is self.active_figure:
+                   self.canvas.addtag_withtag("act_fig", "fig")
                 # center_figure
                 self.canvas.move(rect, MainField.start_x + unit_size, MainField.start_y)
 
     def move_figure(self, x, y):
-        self.canvas.move("active_figure", x, y)
+        self.canvas.move("act_fig", x, y)
 
     def move_left(self, event):
+        print('123')
         self.move_figure(-unit_size, 0)
 
     def move_right(self, event):

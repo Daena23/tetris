@@ -3,4 +3,4 @@ CELL_VALUE = {'Empty': 0, 'Border': 1, 'Sketch': 2.1, 'Tetris': 2.1, 'Rectangle'
 INIT_COORDINATES = (1, int(FIELD_SIZE[1] / 2) - 2)
 FALL_COORD = (1, 0)
 unit_size = 50
-time_per_update = 30
+time_per_update = 20
