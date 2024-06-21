@@ -26,10 +26,9 @@ class MainField:
             self.canvas.bind_all(f"<KeyPress-{z}>", game_loop.turn_counterclockwise)
 
     def update_game(self, draw, game_loop):
-        # todo почему фигкра генерируется в середине поля
-        # todo обратное вращение
         # todo слипание при кручении
         # todo ошибка при конце игры loose - более или менее подправила
+        # todo key release
 
         if not game_loop.you_loose:
             self.root.after(frame_ms, self.update_game, draw, game_loop)

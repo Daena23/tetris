@@ -110,13 +110,16 @@ class GameLoop:
         self.action_sequence.append('right')
 
     def step_down(self, canvas) -> None:
-        self.action_sequence.append('down')
+        if not self.action_sequence:
+            self.action_sequence.append('down')
 
     def action_processing(self) -> None:
         step_directions = {'left': (self.restrict_left_border, STEP_LEFT_COORD, 1),
                            'right': (self.restrict_right_border, STEP_RIGHT_COORD, 1),
                            'down': (self.restrict_height, FALL_COORD, 0)
                            }
+        if self.action_sequence:
+            print(self.action_sequence)
         if self.active_figure:
             for action in self.action_sequence:
                 if action in ('turn_clockwise', 'turn_counterclockwise'):
