@@ -20,9 +20,10 @@ class MainField:
         self.canvas.bind_all("<KeyPress-Left>", game_loop.step_left)
         self.canvas.bind_all("<KeyPress-Right>", game_loop.step_right)
         self.canvas.bind_all("<KeyPress-Down>", game_loop.step_down)
-        self.canvas.bind_all("<KeyPress-z>", game_loop.turn)
+        for x in ('X', 'x'):
+            self.canvas.bind_all(f"<KeyPress-{x}>", game_loop.turn_clockwise)
         for z in ('Z', 'z'):
-            self.canvas.bind_all(f"<KeyPress-{z}>", game_loop.turn)
+            self.canvas.bind_all(f"<KeyPress-{z}>", game_loop.turn_counterclockwise)
 
     def update_game(self, draw, game_loop):
         # todo почему фигкра генерируется в середине поля

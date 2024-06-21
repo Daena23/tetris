@@ -25,7 +25,7 @@ def is_border_contact(active_figure: Figure) -> bool:
 
 
 # SWITCH INDEXES
-def switch_state(figure):
+def switch_state(figure: Figure) -> int:
     if figure.freedom_degree == 2:
         return (figure.state_index + 1) % 2
     else:
@@ -35,8 +35,10 @@ def switch_state(figure):
             return 0
 
 
-def switch_counterclockwise_four_states(figure):
-    if figure.freedom_degree == 4:
+def switch_state_counterclockwise(figure: Figure) -> int:
+    if figure.freedom_degree == 2:
+        return (figure.state_index + 1) % 2
+    else:
         if figure.state_index > 0:
             return figure.state_index - 1
         else:

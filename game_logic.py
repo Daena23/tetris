@@ -2,7 +2,7 @@ from copy import deepcopy
 import random
 from typing import List, Optional
 
-from auxillary_functions import initialize_game, remove_cells, switch_state
+from auxillary_functions import initialize_game, remove_cells, switch_state_counterclockwise, switch_state
 from configuration import CELL_VALUE, FALL_COORD, FIELD_SIZE, STEP_LEFT_COORD, STEP_RIGHT_COORD, init_time_per_update, \
     relative_coords_library
 from figures import Angle, Figure, Origami, Paw, Rectangle, ReverseAngle, ReverseOrigami, Tetris
@@ -97,8 +97,11 @@ class GameLoop:
         self.active_figure.fall()
 
     # SHIFT FIGURE
-    def turn(self, canvas) -> None:
-        self.action_sequence.append('turn_clockwize')
+    def turn_clockwise(self, canvas) -> None:
+        self.action_sequence.append('turn_clockwise')
+
+    def turn_counterclockwise(self, canvas) -> None:
+        self.action_sequence.append('turn_counterclockwise')
 
     def step_left(self, canvas) -> None:
         self.action_sequence.append('left')
@@ -116,9 +119,9 @@ class GameLoop:
                            }
         if self.active_figure:
             for action in self.action_sequence:
-                if action == 'turn_clockwize':
+                if action in ('turn_clockwise', 'turn_counterclockwise'):
                     if self.active_figure.freedom_degree > 1:
-                        self.turn_figure()
+                        self.turn_figure(action)
                 elif self.is_empty_space(step_directions[action][1]) and step_directions[action][0]():
                     index = step_directions[action][2]
                     self.active_figure.anchor_coord[index] += step_directions[action][1][index]
@@ -142,9 +145,12 @@ class GameLoop:
                     return False
         return True
 
-    def turn_figure(self):
+    def turn_figure(self, action: str) -> None:
         # print('bef turn', self.active_figure.coord, self.active_figure.relative_coordinates, 'ind', self.active_figure.state_index, self.active_figure.anchor_coord)
-        new_index = switch_state(self.active_figure)
+        if action == 'turn_clockwise':
+            new_index = switch_state(self.active_figure)
+        elif action == 'turn_counterclockwise':
+            new_index = switch_state_counterclockwise(self.active_figure)
         print('n ind', new_index)
         coord_to_try = [[row + self.active_figure.anchor_coord[0], column + self.active_figure.anchor_coord[1]]
                         for row, column in relative_coords_library[self.active_figure.__repr__()][new_index]]
