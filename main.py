@@ -6,7 +6,7 @@ from main_field import MainField
 
 def main():
     root = Tk()
-    root.geometry("1000x1000")
+    root.geometry("800x500")
     MainField(root)
     time.sleep(0.4)
     root.mainloop()
