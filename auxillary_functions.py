@@ -1,11 +1,7 @@
 from typing import List, Union
 
-from configuration import CELL_VALUE, FIELD_SIZE
+from configuration import FIELD_SIZE
 from figures import Figure
-
-
-def initialize_game() -> List[List[int]]:
-    return [[CELL_VALUE['Empty']] * FIELD_SIZE[1] for line_num in range(FIELD_SIZE[0])]
 
 
 def remove_cells(figure: Figure, coord_to_remove: List[List[int]]) -> None:
@@ -14,18 +10,12 @@ def remove_cells(figure: Figure, coord_to_remove: List[List[int]]) -> None:
             figure.coord.remove(coord)
 
 
-def identify_figure(cell_value: Union[int, float]) -> Union[int, float]:
-    for pair in (list(CELL_VALUE.items())):
-        if cell_value in pair:
-            return pair[0]
-
-
-def is_border_contact(active_figure: Figure) -> bool:
-    return any(row == FIELD_SIZE[0] for row, column in active_figure.find_coord())
+def is_figure_within_field(coord_to_try: List[List[int]]) -> bool:
+    return all([(0 <= row < FIELD_SIZE[0]) and (0 <= column <= FIELD_SIZE[1] - 1) for row, column in coord_to_try])
 
 
 # SWITCH INDEXES
-def switch_state(figure: Figure) -> int:
+def switch_state_forward(figure: Figure) -> int:
     if figure.freedom_degree == 2:
         return (figure.state_index + 1) % 2
     else:
@@ -35,7 +25,7 @@ def switch_state(figure: Figure) -> int:
             return 0
 
 
-def switch_state_counterclockwise(figure: Figure) -> int:
+def switch_state_back(figure: Figure) -> int:
     if figure.freedom_degree == 2:
         return (figure.state_index + 1) % 2
     else:
@@ -43,3 +33,4 @@ def switch_state_counterclockwise(figure: Figure) -> int:
             return figure.state_index - 1
         else:
             return 3
+
