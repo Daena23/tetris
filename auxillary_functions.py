@@ -4,12 +4,6 @@ from configuration import FIELD_SIZE
 from figures import Figure
 
 
-def remove_cells(figure: Figure, coord_to_remove: List[List[int]]) -> None:
-    for coord in coord_to_remove:
-        if coord in figure.coord:
-            figure.coord.remove(coord)
-
-
 def is_figure_within_field(coord_to_try: List[List[int]]) -> bool:
     return all([(0 <= row < FIELD_SIZE[0]) and (0 <= column <= FIELD_SIZE[1] - 1) for row, column in coord_to_try])
 

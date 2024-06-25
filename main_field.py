@@ -28,28 +28,22 @@ class MainField:
             self.canvas.bind_all(f"<KeyPress-{z}>", game_loop.turn_back)
 
     def update_game(self, draw, game_loop):
-        # todo лаги - зависает в воздуе, не удаляется слой
-        # todo слипание при кручении - другой метод
         # todo ошибка при конце игры loose - более или менее подправила
         # todo key release
         # todo надо отладить SCORE
-        # next show fig перключение в начале
+        # KeyError: 'turn_back'
+
         if not game_loop.you_loose:
             self.root.after(frame_ms, self.update_game, draw, game_loop)
             game_loop.action_processing()
-            if game_loop.switch_frame():
-                if not game_loop.next_figure:
-                    game_loop.next_figure = game_loop.create_new_figure()
+            if game_loop.switch_frame():  # todo score
                 # game_loop.speed_up()
-                if game_loop.active_figure:
-                    game_loop.update_active_figure()
-                else:
-                    row_to_remove = game_loop.find_filled_row()
-                    if row_to_remove:
-                        game_loop.remove_filled_rows(row_to_remove)
-                    else:
-                        game_loop.active_figure = copy(game_loop.next_figure)
-                        game_loop.next_figure = None
-                        game_loop.all_figures.append(game_loop.active_figure)
-                        game_loop.check_loss()
+                # act fig входит в allfig
+                game_loop.create_new_figure()
+                game_loop.update_active_figure()
+                if game_loop.find_filled_rows():
+                    game_loop.remove_filled_rows()
+                if not game_loop.active_figure:
+                    game_loop.activate_figure()
+                game_loop.check_loss()
             draw.update_canvas(game_loop)

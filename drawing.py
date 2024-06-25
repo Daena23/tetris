@@ -39,7 +39,6 @@ class Draw:
 
     def is_player_lost(self, game_loop) -> None:
         if game_loop.you_loose:
-            print('draw you_loose', game_loop.you_loose)
             self.canvas.create_text(Draw.hor_indent + (FIELD_SIZE[1] + 2) * UNIT_SIZE / 2,
                                     (FIELD_SIZE[0] + 1.5) * UNIT_SIZE,
                                     text="You loose",

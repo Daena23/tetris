@@ -1,8 +1,8 @@
 import random
-from copy import deepcopy
+from copy import copy, deepcopy
 from typing import List, Optional
 
-from auxillary_functions import is_figure_within_field, remove_cells, switch_state_back, \
+from auxillary_functions import is_figure_within_field, switch_state_back, \
     switch_state_forward
 from configuration import FALL_COORD, FIELD_SIZE, init_time_per_update
 from figures import Angle, Figure, Origami, Paw, Rectangle, ReverseAngle, ReverseOrigami, Tetris
@@ -18,6 +18,7 @@ class GameLoop:
         self.time_per_update: int = time_per_update
         self.action: str = ''
         self.filled_row_counter: int = 0
+        self.rows_to_remove = []
 
     def speed_up(self):  # todo refactor
         if self.time_per_update > 4:
@@ -25,45 +26,43 @@ class GameLoop:
             if self.time_per_update < 2:
                 print('here error gl-26')
 
-    def switch_frame(self) -> bool:   # todo refactor
+    def switch_frame(self) -> bool:
         self.frame_counter += 1
-        update_frame = self.frame_counter == self.time_per_update
-        if update_frame:
+        if self.frame_counter == self.time_per_update:
             self.frame_counter = 0
-        return update_frame
+            return True
+        return False
 
-    @staticmethod
-    def create_new_figure() -> Figure:
-        return random.choice((Origami('red'),
-                              Paw('violet'),
-                              Rectangle('yellow'),
-                              Tetris('green'),
-                              Angle('blue'),
-                              ReverseOrigami('orange'),
-                              ReverseAngle('pink')))
+    def create_new_figure(self) -> None:
+        if not self.next_figure:
+            self.next_figure = random.choice((Origami('red'),
+                                              Paw('violet'),
+                                              Rectangle('yellow'),
+                                              Tetris('green'),
+                                              Angle('blue'),
+                                              ReverseOrigami('orange'),
+                                              ReverseAngle('pink')))
 
-    # ROW SHIFT
-    def find_filled_row(self) -> List[int]:
-        rows_to_remove = []
-        lst = []
-        for row_num in range(2, FIELD_SIZE[0]):
-            # todo НЕ РАБОТАЕТ
-            for figure in self.all_figures:
-                lst = [(row, column) for row, column in figure.coord if row == row_num]
-                if len(set(lst)) == FIELD_SIZE[1] - 1:
-                    rows_to_remove.append(row_num)
-        # if rows_to_remove:
-        #     print('rowstorem', rows_to_remove)
-        return rows_to_remove
+    def find_filled_rows(self) -> List[int]:
+        self.rows_to_remove = []
+        for row_num in range(1, FIELD_SIZE[0]):
+            row_coord = []
+            for figure in self.all_figures[:-1]:
+                row_coord.extend([(row, column) for row, column in figure.coord if row == row_num])
+            if len(set(row_coord)) == FIELD_SIZE[1]:
+                self.rows_to_remove.append(row_num)
+        return self.rows_to_remove
 
-    def remove_filled_rows(self, row_to_remove) -> None:  # todo убрать - перементсть
+    def remove_filled_rows(self) -> None:
         # remove filled row
-        coord_to_remove = [[row_num, cell_num] for cell_num in range(FIELD_SIZE[1]) for row_num in row_to_remove]
+        coord_to_remove = [[row, column] for column in range(FIELD_SIZE[1]) for row in self.rows_to_remove]
         for figure in self.all_figures:
-            remove_cells(figure, coord_to_remove)
+            for coord in coord_to_remove:
+                if coord in figure.coord:
+                    figure.coord.remove(coord)
         # filter empty figures
         self.all_figures = [figure for figure in self.all_figures if figure.coord]
-        self.shift_upper_rows(row_to_remove)
+        self.shift_upper_rows(self.rows_to_remove)
 
     def shift_upper_rows(self, row_to_remove: List[List[int]]):
         for figure in self.all_figures:
@@ -78,19 +77,19 @@ class GameLoop:
                     self.you_loose = True
                     return
 
-    # def falling_figure_stuck_to_another(self, row: int, column: int) -> bool:
-    #     for figure in self.all_figures[:-1]:
-    #         if [row + 1, column] in figure.coord:
-    #             return True
-    #     return False
+    def activate_figure(self):
+        self.active_figure = copy(self.next_figure)
+        self.next_figure = None
+        self.all_figures.append(self.active_figure)
 
     def update_active_figure(self):
-        coord_to_try = [[row + 1, column] for row, column in self.active_figure.find_coord()]
-        if not is_figure_within_field(coord_to_try) or self.is_intersection(coord_to_try):
-            self.active_figure = None
-            return
-        self.active_figure.anchor_coord[0] += FALL_COORD[0]
-        self.active_figure.coord = self.active_figure.find_coord()
+        if self.active_figure:
+            coord_to_try = [[row + FALL_COORD[0], column] for row, column in self.active_figure.find_coord()]
+            if not is_figure_within_field(coord_to_try) or self.is_intersection(coord_to_try):
+                self.active_figure = None
+                return
+            self.active_figure.anchor_coord[0] += FALL_COORD[0]
+            self.active_figure.coord = self.active_figure.find_coord()
 
     # SHIFT FIGURES
     def turn(self, canvas) -> None:
