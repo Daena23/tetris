@@ -6,5 +6,10 @@ STEP_LEFT_COORD = (0, -1)
 STEP_RIGHT_COORD = (0, 1)
 
 UNIT_SIZE = 30
-frame_ms = 10
-init_time_per_update = 12  # [2, 12]
+FRAME_MS = 20
+
+INIT_SPEED = 10  # [10, 60]
+MAX_SPEED = 60
+FREQUENCY = 10
+COEFFICIENT = 124
+SPEED_GROWTH = 10

@@ -1,6 +1,7 @@
+import random
 from typing import List
 
-from configuration import FALL_COORD, INIT_COORDINATES
+from configuration import FIELD_SIZE, INIT_COORDINATES
 
 
 class Figure:
@@ -9,21 +10,18 @@ class Figure:
         self.freedom_degree = 2
         self.color = color
         # coord
-        self.relative_coord = []
-        self.relative_coord_library = []
+        self.rel_coord = []
+        self.rel_coord_library = []
         self.anchor_coord = list(INIT_COORDINATES)
         self.coord = []
 
     def find_all_coord(self):
-        self.relative_coord = self.relative_coord_library[0]
+        self.rel_coord = self.rel_coord_library[0]
         self.coord = self.find_coord()
 
     def find_coord(self):
-        self.coord = [[row + self.anchor_coord[0], column + self.anchor_coord[1]] for row, column in self.relative_coord]
+        self.coord = [[row + self.anchor_coord[0], column + self.anchor_coord[1]] for row, column in self.rel_coord]
         return self.coord
-
-    # def find_init_coord(self) -> List[List[int]]:
-    #     return [[row + Figure.init_coord[0], column + Figure.init_coord[1]] for row, column in self.relative_coord]
 
     @property
     def __repr__(self) -> str:
@@ -34,7 +32,7 @@ class Figure:
 class Tetris(Figure):
     def __init__(self, color):
         super().__init__(color)
-        self.relative_coord_library = [
+        self.rel_coord_library = [
             [[0, -1], [0, 0], [0, 1], [0, 2]],
             [[-1, 0], [0, 0], [1, 0], [2, 0]]
         ]
@@ -45,7 +43,7 @@ class Rectangle(Figure):
     def __init__(self, color):
         super().__init__(color)
         self.freedom_degree = 1
-        self.relative_coord_library = [
+        self.rel_coord_library = [
             [[-1, 0], [0, 0], [0, -1], [-1, -1]]
         ]
         self.find_all_coord()
@@ -54,7 +52,7 @@ class Rectangle(Figure):
 class Origami(Figure):
     def __init__(self, color):
         super().__init__(color)
-        self.relative_coord_library = [
+        self.rel_coord_library = [
             [[0, -1], [0, 0], [1, 0], [1, 1]],
             [[-1, 0], [0, 0], [0, -1], [1, -1]]
         ]
@@ -65,7 +63,7 @@ class Angle(Figure):
     def __init__(self, color):
         super().__init__(color)
         self.freedom_degree = 4
-        self.relative_coord_library = [
+        self.rel_coord_library = [
             [[1, 1], [0, 1], [0, 0], [0, -1]],
             [[-1, 1], [-1, 0], [0, 0], [1, 0]],
             [[-1, -1], [0, -1], [0, 0], [0, 1]],
@@ -78,7 +76,7 @@ class Paw(Figure):
     def __init__(self, color):
         super().__init__(color)
         self.freedom_degree = 4
-        self.relative_coord_library = [ # todo неправильно крутиться
+        self.rel_coord_library = [
             [[0, -1], [0, 0], [0, 1], [-1, 0]],
             [[1, 0], [0, 0], [-1, 0], [0, -1]],
             [[0, -1], [0, 0], [0, 1], [1, 0]],
@@ -91,7 +89,7 @@ class ReverseAngle(Figure):
     def __init__(self, color):
         super().__init__(color)
         self.freedom_degree = 4
-        self.relative_coord_library = [
+        self.rel_coord_library = [
             [[-1, 1], [0, 1], [0, 0], [0, -1]],
             [[-1, -1], [-1, 0], [0, 0], [1, 0]],
             [[1, -1], [0, -1], [0, 0], [0, 1]],
@@ -104,8 +102,25 @@ class ReverseOrigami(Figure):
     def __init__(self, color):
         super().__init__(color)
         self.freedom_degree = 2
-        self.relative_coord_library = [
+        self.rel_coord_library = [
             [[1, 0], [0, 0], [0, 1], [1, -1]],
             [[1, 0], [0, 0], [0, -1], [-1, -1]],
         ]
         self.find_all_coord()
+
+
+def define_random_coord() -> List[List[int]]:
+    coord = []
+    for row_num in range(FIELD_SIZE[0] // 2):
+        n = random.randint(1, FIELD_SIZE[1])
+        for column_num in range(n):
+            coord.append([row_num, random.randint(0, FIELD_SIZE[1])])
+    return coord
+
+
+class ChaoticElements(Figure):
+    def __init__(self, color):
+        super().__init__(color)
+        self.freedom_degree = 2
+        self.coord = define_random_coord()
+

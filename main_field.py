@@ -1,46 +1,44 @@
-from copy import copy
+import time
 from tkinter import Canvas
 
-from configuration import FIELD_SIZE, UNIT_SIZE, frame_ms, init_time_per_update
+from configuration import FIELD_SIZE, UNIT_SIZE, FRAME_MS
 from drawing import Draw
 from game_logic import GameLoop
+from input_controller import InputController
+
+t = time.time()
 
 
 class MainField:
     def __init__(self, root):
         self.root = root
         self.canvas = Canvas(bg="white",
-                             height=(FIELD_SIZE[0] + 2) * UNIT_SIZE,
+                             height=(FIELD_SIZE[0] + 3.5) * UNIT_SIZE,
                              width=(FIELD_SIZE[1] + 9) * UNIT_SIZE)
         self.canvas.pack()
+        control = InputController()
         draw = Draw(self.canvas)
-        game_loop = GameLoop(init_time_per_update)
-        self.command(game_loop)
-        self.root.after(frame_ms, self.update_game, draw, game_loop)
+        game_loop = GameLoop()
+        control.command(self.canvas)
+        self.root.after(FRAME_MS, self.update_game, game_loop, control, draw)
 
-    def command(self, game_loop):
-        self.canvas.bind_all("<KeyPress-Left>", game_loop.step_left)
-        self.canvas.bind_all("<KeyPress-Right>", game_loop.step_right)
-        self.canvas.bind_all("<KeyPress-Down>", game_loop.step_down)
-        for x in ('X', 'x'):
-            self.canvas.bind_all(f"<KeyPress-{x}>", game_loop.turn)
-        for z in ('Z', 'z'):
-            self.canvas.bind_all(f"<KeyPress-{z}>", game_loop.turn_back)
-
-    def update_game(self, draw, game_loop):
-        # todo ошибка при конце игры loose - более или менее подправила
-        # todo key release
-        # todo надо отладить SCORE
-        # KeyError: 'turn_back'
+    def update_game(self, game_loop, control, draw):
+        # todo почему время больше
+        # todo проскакивание слоев
+        # рандомное заполнение до определенной высотя
+        global t
+        current_start_time = time.time()
+        previous_start_time = t
+        t = current_start_time
+        time_between_iterations = current_start_time - previous_start_time
 
         if not game_loop.you_loose:
-            self.root.after(frame_ms, self.update_game, draw, game_loop)
-            game_loop.action_processing()
-            if game_loop.switch_frame():  # todo score
-                # game_loop.speed_up()
-                # act fig входит в allfig
+            self.root.after(FRAME_MS, self.update_game, game_loop, control, draw)
+            control.action_processing(game_loop)
+            if game_loop.switch_frame():
+                game_loop.speed_up()
                 game_loop.create_new_figure()
-                game_loop.update_active_figure()
+                game_loop.update_active_figure(game_loop)
                 if game_loop.find_filled_rows():
                     game_loop.remove_filled_rows()
                 if not game_loop.active_figure:

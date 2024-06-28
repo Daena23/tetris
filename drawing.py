@@ -2,6 +2,11 @@ from configuration import FIELD_SIZE, UNIT_SIZE
 from figures import Figure
 
 
+def define_color(figure):
+    figure_color = figure.color
+    return figure_color
+
+
 class Draw:
     start_x, start_y = 1.25 * UNIT_SIZE, UNIT_SIZE
     hor_indent, vert_indent = UNIT_SIZE / 4, UNIT_SIZE / 4 + (FIELD_SIZE[1] + 1) * UNIT_SIZE
@@ -40,10 +45,16 @@ class Draw:
     def is_player_lost(self, game_loop) -> None:
         if game_loop.you_loose:
             self.canvas.create_text(Draw.hor_indent + (FIELD_SIZE[1] + 2) * UNIT_SIZE / 2,
-                                    (FIELD_SIZE[0] + 1.5) * UNIT_SIZE,
+                                    (FIELD_SIZE[0] + 1.7) * UNIT_SIZE,
                                     text="You loose",
                                     fill="black",
                                     font='Helvetica 15 bold')
+
+            self.canvas.create_text(Draw.hor_indent + (FIELD_SIZE[1] + 2) * UNIT_SIZE / 2,
+                                    (FIELD_SIZE[0] + 2.5) * UNIT_SIZE,
+                                    text=f"Your score is {game_loop.score}",
+                                    fill="black",
+                                    font='Helvetica 13 bold')
             return game_loop.you_loose
 
     def ceiling(self) -> None:
@@ -54,13 +65,13 @@ class Draw:
                                 fill="black")
 
     def future_figure(self, figure: Figure) -> None:
-        rect = self.canvas.create_rectangle(UNIT_SIZE * 12.5,
-                                            UNIT_SIZE * 11,
-                                            UNIT_SIZE * 19,
-                                            UNIT_SIZE * 16,
-                                            fill='white', outline='black', width=1.2)
+        self.canvas.create_rectangle(UNIT_SIZE * 12.5,
+                                     UNIT_SIZE * 11,
+                                     UNIT_SIZE * 19,
+                                     UNIT_SIZE * 16,
+                                     fill='white', outline='black', width=1.2)
         if figure:
-            for coord in figure.relative_coord_library[0]:
+            for coord in figure.rel_coord_library[0]:
                 rect = self.canvas.create_rectangle(UNIT_SIZE * (coord[1] - 1),
                                                     UNIT_SIZE * (coord[0] - 1),
                                                     UNIT_SIZE * (coord[1]),
@@ -76,14 +87,10 @@ class Draw:
                                                     UNIT_SIZE * (coord[0] - 1),
                                                     UNIT_SIZE * (coord[1]),
                                                     UNIT_SIZE * (coord[0]),
-                                                    fill=f"{self.define_color(coord, figure)}", width=1.2)
+                                                    fill=f"{define_color(figure)}", width=1.2)
 
                 # center_figure
                 self.canvas.move(rect, Draw.start_x + UNIT_SIZE, Draw.start_y)
-
-    def define_color(self, coord, figure):
-        figure_color = figure.color
-        return figure_color
 
     def border(self) -> None:
         # vertical columns
