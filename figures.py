@@ -1,11 +1,8 @@
-import random
-from typing import List
-
-from configuration import FIELD_SIZE, INIT_COORDINATES
+from configuration import INIT_COORDINATES
 
 
 class Figure:
-    def __init__(self, color):
+    def __init__(self, color, coord=None):
         self.state_index = 0
         self.freedom_degree = 2
         self.color = color
@@ -109,18 +106,8 @@ class ReverseOrigami(Figure):
         self.find_all_coord()
 
 
-def define_random_coord() -> List[List[int]]:
-    coord = []
-    for row_num in range(FIELD_SIZE[0] // 2):
-        n = random.randint(1, FIELD_SIZE[1])
-        for column_num in range(n):
-            coord.append([row_num, random.randint(0, FIELD_SIZE[1])])
-    return coord
-
-
-class ChaoticElements(Figure):
-    def __init__(self, color):
-        super().__init__(color)
-        self.freedom_degree = 2
-        self.coord = define_random_coord()
-
+class NoodlesFigure(Figure):
+    def __init__(self, color, coord):
+        super().__init__(coord)
+        self.coord = [coord]
+        self.color = color

@@ -1,3 +1,2 @@
-action = 'outturn'
-new_index = '1' if action == 'turn' else '2'
-print(new_index)
+est = [1, 2, 3]
+print(est[::-1])

@@ -35,13 +35,13 @@ class InputController:
         if event.keysym in self.pressed_key:
             self.pressed_key.remove(event.keysym)
 
-    def step_left(self, canvas) -> None:
+    def step_left(self, event) -> None:
         self.action = 'left'
 
-    def step_right(self, canvas) -> None:
+    def step_right(self, event) -> None:
         self.action = 'right'
 
-    def step_down(self, canvas) -> None:
+    def step_down(self, event) -> None:
         self.action = 'down'
 
     def action_processing(self, game_loop) -> None:

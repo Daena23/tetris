@@ -2,11 +2,6 @@ from configuration import FIELD_SIZE, UNIT_SIZE
 from figures import Figure
 
 
-def define_color(figure):
-    figure_color = figure.color
-    return figure_color
-
-
 class Draw:
     start_x, start_y = 1.25 * UNIT_SIZE, UNIT_SIZE
     hor_indent, vert_indent = UNIT_SIZE / 4, UNIT_SIZE / 4 + (FIELD_SIZE[1] + 1) * UNIT_SIZE
@@ -87,7 +82,7 @@ class Draw:
                                                     UNIT_SIZE * (coord[0] - 1),
                                                     UNIT_SIZE * (coord[1]),
                                                     UNIT_SIZE * (coord[0]),
-                                                    fill=f"{define_color(figure)}", width=1.2)
+                                                    fill=f'{figure.color}', width=1.2)
 
                 # center_figure
                 self.canvas.move(rect, Draw.start_x + UNIT_SIZE, Draw.start_y)

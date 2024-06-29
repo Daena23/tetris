@@ -1,4 +1,4 @@
-FIELD_SIZE = (20, 10)  # width must be >= 6
+FIELD_SIZE = (20, 10)  # width >= 6
 
 INIT_COORDINATES = (1, int(FIELD_SIZE[1] / 2) - 1)
 FALL_COORD = (1, 0)
@@ -10,6 +10,6 @@ FRAME_MS = 20
 
 INIT_SPEED = 10  # [10, 60]
 MAX_SPEED = 60
-FREQUENCY = 10
+FREQUENCY = 20
 COEFFICIENT = 124
 SPEED_GROWTH = 10
