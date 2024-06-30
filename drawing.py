@@ -2,7 +2,7 @@ from configuration import FIELD_SIZE, UNIT_SIZE
 from figures import Figure
 
 
-class Draw:
+class GameField:
     start_x, start_y = 1.25 * UNIT_SIZE, UNIT_SIZE
     hor_indent, vert_indent = UNIT_SIZE / 4, UNIT_SIZE / 4 + (FIELD_SIZE[1] + 1) * UNIT_SIZE
     border_color = '#B6B6B6'
@@ -24,28 +24,34 @@ class Draw:
         self.upper_patch()
 
     def empty_canvas(self) -> None:
-        self.canvas.create_rectangle(Draw.hor_indent + UNIT_SIZE + 1,
+        self.canvas.create_rectangle(GameField.hor_indent + UNIT_SIZE + 1,
                                      UNIT_SIZE,
-                                     Draw.hor_indent + (FIELD_SIZE[1] + 1) * UNIT_SIZE - 1,
+                                     GameField.hor_indent + (FIELD_SIZE[1] + 1) * UNIT_SIZE - 1,
                                      FIELD_SIZE[0] * UNIT_SIZE - 1, fill="white", outline="white")
 
     def upper_patch(self) -> None:
         self.canvas.create_rectangle(UNIT_SIZE,
                                      0,
-                                     Draw.hor_indent + (FIELD_SIZE[1] + 1) * UNIT_SIZE,
+                                     GameField.hor_indent + (FIELD_SIZE[1] + 1) * UNIT_SIZE,
                                      2 * UNIT_SIZE,
                                      fill="white", outline="white")
         self.ceiling()
 
     def is_player_lost(self, game_loop) -> None:
+        if game_loop.you_won:
+            self.canvas.create_text(GameField.hor_indent + (FIELD_SIZE[1] + 2) * UNIT_SIZE / 2,
+                                    (FIELD_SIZE[0] + 1.7) * UNIT_SIZE,
+                                    text="You won",
+                                    fill="black",
+                                    font='Helvetica 15 bold')
         if game_loop.you_loose:
-            self.canvas.create_text(Draw.hor_indent + (FIELD_SIZE[1] + 2) * UNIT_SIZE / 2,
+            self.canvas.create_text(GameField.hor_indent + (FIELD_SIZE[1] + 2) * UNIT_SIZE / 2,
                                     (FIELD_SIZE[0] + 1.7) * UNIT_SIZE,
                                     text="You loose",
                                     fill="black",
                                     font='Helvetica 15 bold')
 
-            self.canvas.create_text(Draw.hor_indent + (FIELD_SIZE[1] + 2) * UNIT_SIZE / 2,
+            self.canvas.create_text(GameField.hor_indent + (FIELD_SIZE[1] + 2) * UNIT_SIZE / 2,
                                     (FIELD_SIZE[0] + 2.5) * UNIT_SIZE,
                                     text=f"Your score is {game_loop.score}",
                                     fill="black",
@@ -53,9 +59,9 @@ class Draw:
             return game_loop.you_loose
 
     def ceiling(self) -> None:
-        self.canvas.create_line(Draw.hor_indent,
+        self.canvas.create_line(GameField.hor_indent,
                                 2 * UNIT_SIZE,
-                                Draw.hor_indent + UNIT_SIZE * (FIELD_SIZE[1] + 2),
+                                GameField.hor_indent + UNIT_SIZE * (FIELD_SIZE[1] + 2),
                                 2 * UNIT_SIZE,
                                 fill="black")
 
@@ -85,25 +91,25 @@ class Draw:
                                                     fill=f'{figure.color}', width=1.2)
 
                 # center_figure
-                self.canvas.move(rect, Draw.start_x + UNIT_SIZE, Draw.start_y)
+                self.canvas.move(rect, GameField.start_x + UNIT_SIZE, GameField.start_y)
 
     def border(self) -> None:
         # vertical columns
-        for indent in (Draw.hor_indent, Draw.vert_indent):
+        for indent in (GameField.hor_indent, GameField.vert_indent):
             for unit_num in range(2, FIELD_SIZE[0] + 1):
                 self.canvas.create_rectangle(indent,
                                              unit_num * UNIT_SIZE,
                                              indent + UNIT_SIZE,
                                              (unit_num + 1) * UNIT_SIZE,
-                                             fill=Draw.border_color
+                                             fill=GameField.border_color
                                              )
 
         # horizontal columns
         for unit_num in range(FIELD_SIZE[1] + 2):
-            self.canvas.create_rectangle(Draw.hor_indent + unit_num * UNIT_SIZE,
+            self.canvas.create_rectangle(GameField.hor_indent + unit_num * UNIT_SIZE,
                                          FIELD_SIZE[0] * UNIT_SIZE,
-                                         Draw.hor_indent + (unit_num + 1) * UNIT_SIZE,
+                                         GameField.hor_indent + (unit_num + 1) * UNIT_SIZE,
                                          FIELD_SIZE[0] * UNIT_SIZE + UNIT_SIZE,
-                                         fill=Draw.border_color
+                                         fill=GameField.border_color
                                          )
         self.ceiling()

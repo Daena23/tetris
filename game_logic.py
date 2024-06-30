@@ -7,12 +7,13 @@ from configuration import COEFFICIENT, FALL_COORD, FIELD_SIZE, FREQUENCY, MAX_SP
 from figures import Angle, Figure, NoodlesFigure, Origami, Paw, Rectangle, ReverseAngle, ReverseOrigami, Tetris
 
 
-class GameLoop:
+class LogicLoop:
     def __init__(self):
         self.next_figure: Optional[Figure] = None
         self.active_figure: Optional[Figure] = None
         self.all_figures: Optional[List[Figure]] = []
         self.you_loose: bool = False
+        self.you_won: bool = False
         self.frame_counter: int = 0
         self.action: str = ''
         self.rows_to_remove = []
@@ -48,7 +49,6 @@ class GameLoop:
         self.all_figures.append(self.active_figure)
         self.create_new_figure()
 
-
     def create_new_figure(self) -> None:
         self.next_figure = random.choice((Tetris('#37a237'),
                                           Origami('#f26d49'),
@@ -71,25 +71,25 @@ class GameLoop:
         coord_to_try = [[row + FALL_COORD[0], column] for row, column in self.active_figure.find_coord()]
         if not is_figure_within_field(coord_to_try) or is_intersection(self, coord_to_try):
             self.active_figure = None
-            print('active_figure = None')
             return
         self.active_figure.anchor_coord[0] += FALL_COORD[0]
         self.active_figure.coord = self.active_figure.find_coord()
 
     # REMOVE ROWS
     def find_filled_rows(self) -> List[int]:
-        self.rows_to_remove = []
-        for row_num in range(1, FIELD_SIZE[0]):
-            row_coord = []
-            for figure in self.all_figures:
-                row_coord.extend([(row, column) for row, column in figure.coord if row == row_num])
-            if len(set(row_coord)) == FIELD_SIZE[1]:
-                self.rows_to_remove.append(row_num)
-                self.increase_speed = True
-        if len(self.rows_to_remove) > 0:
-            self.total_filled_rows += len(self.rows_to_remove)
-            self.active_figure = None
-        return self.rows_to_remove
+        if self.all_figures:
+            self.rows_to_remove = []
+            for row_num in range(1, FIELD_SIZE[0]):
+                row_coord = []
+                for figure in self.all_figures:
+                    row_coord.extend([(row, column) for row, column in figure.coord if row == row_num])
+                if len(set(row_coord)) == FIELD_SIZE[1]:
+                    self.rows_to_remove.append(row_num)
+                    self.increase_speed = True
+            if len(self.rows_to_remove) > 0:
+                self.total_filled_rows += len(self.rows_to_remove)
+                self.active_figure = None
+            return self.rows_to_remove
 
     def remove_filled_rows(self) -> None:
         # remove filled row
