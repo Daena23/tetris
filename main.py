@@ -1,7 +1,7 @@
 import time
 from tkinter import *
 
-from draw_init_screen import Menu
+from init_screen import Menu
 
 
 def main():

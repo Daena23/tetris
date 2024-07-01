@@ -2,7 +2,7 @@ from tkinter import Canvas
 
 from configuration import FIELD_SIZE, FRAME_MS, UNIT_SIZE
 from drawing import GameField
-from game_logic import LogicLoop
+from logic_loop import LogicLoop
 from input_controller import InputController
 
 
@@ -35,9 +35,7 @@ class MainLoop:
                 if game_loop.active_figure is None:
                     if game_loop.find_filled_rows():
                         game_loop.remove_filled_rows()
-                        if game_type == 'A' and game_loop.total_filled_rows == 3:  # constant
-                            game_loop.you_won = True
-
+                        game_loop.check_win(game_type)
                         game_loop.time_remained_to_spawn = 2  # choose the constant of your choice
                     if game_loop.time_remained_to_spawn == 0:
                         game_loop.activate_figure()

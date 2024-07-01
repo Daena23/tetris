@@ -3,7 +3,7 @@ from copy import copy
 from typing import List, Optional
 
 from auxillary_functions import define_random_coord, is_figure_within_field, is_intersection
-from configuration import COEFFICIENT, FALL_COORD, FIELD_SIZE, FREQUENCY, MAX_SPEED, SPEED_GROWTH
+from configuration import COEFFICIENT, FALL_COORD, FIELD_SIZE, FREQUENCY, LEVELS_FOR_WIN, MAX_SPEED, SPEED_GROWTH
 from figures import Angle, Figure, NoodlesFigure, Origami, Paw, Rectangle, ReverseAngle, ReverseOrigami, Tetris
 
 
@@ -41,6 +41,10 @@ class LogicLoop:
         coordinates = define_random_coord()
         for coord in coordinates:
             self.all_figures.append(NoodlesFigure(random.choice(("#f26d49", "#539cd9", "#37a237", "#f9eb76")), coord))
+
+    def check_win(self, game_type) -> None:
+        if game_type == 'A' and self.total_filled_rows >= LEVELS_FOR_WIN:
+            self.you_won = True
 
     # ACTIVE FIGURE
     def create_init_figures(self):
