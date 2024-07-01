@@ -5,7 +5,7 @@ from init_screen import Menu
 
 
 def main():
-    print('dupa')
+    print('lupa')
     root = Tk()
     root.configure(background='#B6B6B6')
     root.geometry("800x800")
