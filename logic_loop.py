@@ -2,8 +2,8 @@ import random
 from copy import copy
 from typing import List, Optional
 
-from auxillary_functions import define_random_coord, is_figure_within_field, is_intersection
-from configuration import COEFFICIENT, FALL_COORD, FIELD_SIZE, FREQUENCY, LEVELS_FOR_WIN, MAX_SPEED, SPEED_GROWTH
+from utils import define_random_coord, is_figure_within_field, is_intersection
+from configuration import SWITCHING_FRAME_COEFFICIENT, FALL_COORD, FIELD_SIZE, HOW_OFTEN_SPEED_UP, LEVELS_FOR_WIN, MAX_SPEED, SPEED_GROWTH
 from figures import Angle, Figure, NoodlesFigure, Origami, Paw, Rectangle, ReverseAngle, ReverseOrigami, Tetris
 
 
@@ -21,18 +21,18 @@ class LogicLoop:
         self.score: int = 0
         self.total_filled_rows: int = 0
         self.increase_speed = False
-        self.time_remained_to_spawn = 0
+        self.time_remained_to_spawn_figure: int = 0
 
     # CYCLE CHECKPOINTS
     def speed_up(self) -> None:
-        if self.total_filled_rows % FREQUENCY == 0 and self.increase_speed:
+        if self.total_filled_rows % HOW_OFTEN_SPEED_UP == 0 and self.increase_speed:
             self.increase_speed = False
             if self.speed < MAX_SPEED:
                 self.speed += SPEED_GROWTH
 
     def switch_frame(self) -> bool:
         self.frame_counter += 1
-        if self.frame_counter == COEFFICIENT // self.speed:
+        if self.frame_counter == SWITCHING_FRAME_COEFFICIENT // self.speed:
             self.frame_counter = 0
             return True
         return False
@@ -42,12 +42,12 @@ class LogicLoop:
         for coord in coordinates:
             self.all_figures.append(NoodlesFigure(random.choice(("#f26d49", "#539cd9", "#37a237", "#f9eb76")), coord))
 
-    def check_win(self, game_type) -> None:
+    def check_if_won(self, game_type: str) -> None:
         if game_type == 'A' and self.total_filled_rows >= LEVELS_FOR_WIN:
             self.you_won = True
 
     # ACTIVE FIGURE
-    def create_init_figures(self):
+    def create_init_figures(self) -> None:
         self.create_new_figure()
         self.active_figure = copy(self.next_figure)
         self.all_figures.append(self.active_figure)
@@ -72,14 +72,15 @@ class LogicLoop:
             return
 
     def update_active_figure(self) -> None:
-        coord_to_try = [[row + FALL_COORD[0], column] for row, column in self.active_figure.find_coord()]
+        coord_to_try: List[List[int]] = \
+            [[row + FALL_COORD[0], column] for row, column in self.active_figure.find_coord()]
         if not is_figure_within_field(coord_to_try) or is_intersection(self, coord_to_try):
-            self.active_figure = None
+            self.active_figure: Optional[Figure] = None
             return
         self.active_figure.anchor_coord[0] += FALL_COORD[0]
         self.active_figure.coord = self.active_figure.find_coord()
 
-    # REMOVE ROWS
+# REMOVE ROWS
     def find_filled_rows(self) -> List[int]:
         if self.all_figures:
             self.rows_to_remove = []
@@ -96,7 +97,7 @@ class LogicLoop:
             return self.rows_to_remove
 
     def remove_filled_rows(self) -> None:
-        # remove filled row
+        # filter filled row
         coord_to_remove = [[row, column] for column in range(FIELD_SIZE[1]) for row in self.rows_to_remove]
         for figure in self.all_figures:
             for coord in coord_to_remove:
