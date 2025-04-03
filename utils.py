@@ -18,9 +18,9 @@ def is_figure_within_field(coord_to_try: List[List[int]]) -> bool:
     return all([(0 <= row < FIELD_SIZE[0]) and (0 <= column <= FIELD_SIZE[1] - 1) for row, column in coord_to_try])
 
 
-def is_intersection(game_loop, coord_to_try: List[List[int]]):
+def is_intersection(logic_loop, coord_to_try: List[List[int]]):
     for row, column in coord_to_try:
-        for figure in game_loop.all_figures[:-1]:
+        for figure in logic_loop.all_figures[:-1]:
             if [row, column] in figure.coord:
                 return True
     return False

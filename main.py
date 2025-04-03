@@ -1,14 +1,14 @@
 import time
 from tkinter import *
 
-from init_screen import Menu
+from init_screen import InitScreen
 
 
 def main():
     root = Tk()
     root.configure(background='#B6B6B6')
     root.geometry("800x800")
-    Menu(root)
+    InitScreen(root)
     time.sleep(0.4)
     root.mainloop()
 

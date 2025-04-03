@@ -1,24 +1,25 @@
+from typing import List
+
 from configuration import INIT_COORDINATES
 
 
 class Figure:
-    def __init__(self, color, coord=None):
+    def __init__(self, color):
         self.state_index = 0
         self.freedom_degree = 2
         self.color = color
         # coord
-        self.rel_coord = []
-        self.rel_coord_library = []
+        self.relative_coord = []
+        self.relative_coord_library = []
         self.anchor_coord = list(INIT_COORDINATES)
         self.coord = []
 
-    def find_all_coord(self):
-        self.rel_coord = self.rel_coord_library[0]
+    def find_all_coord(self) -> None:
+        self.relative_coord = self.relative_coord_library[0]
         self.coord = self.find_coord()
 
-    def find_coord(self):
-        self.coord = [[row + self.anchor_coord[0], column + self.anchor_coord[1]] for row, column in self.rel_coord]
-        return self.coord
+    def find_coord(self) -> List[List[int]]:
+        return [[row + self.anchor_coord[0], column + self.anchor_coord[1]] for row, column in self.relative_coord]
 
     @property
     def __repr__(self) -> str:
@@ -29,7 +30,7 @@ class Figure:
 class Tetris(Figure):
     def __init__(self, color):
         super().__init__(color)
-        self.rel_coord_library = [
+        self.relative_coord_library = [
             [[0, -1], [0, 0], [0, 1], [0, 2]],
             [[-1, 0], [0, 0], [1, 0], [2, 0]]
         ]
@@ -40,7 +41,7 @@ class Rectangle(Figure):
     def __init__(self, color):
         super().__init__(color)
         self.freedom_degree = 1
-        self.rel_coord_library = [
+        self.relative_coord_library = [
             [[-1, 0], [0, 0], [0, -1], [-1, -1]]
         ]
         self.find_all_coord()
@@ -49,7 +50,7 @@ class Rectangle(Figure):
 class Origami(Figure):
     def __init__(self, color):
         super().__init__(color)
-        self.rel_coord_library = [
+        self.relative_coord_library = [
             [[0, -1], [0, 0], [1, 0], [1, 1]],
             [[-1, 0], [0, 0], [0, -1], [1, -1]]
         ]
@@ -59,8 +60,8 @@ class Origami(Figure):
 class Angle(Figure):
     def __init__(self, color):
         super().__init__(color)
-        self.freedom_degree = 4
-        self.rel_coord_library = [
+        self.freedom_degree: int = 4
+        self.relative_coord_library = [
             [[1, 1], [0, 1], [0, 0], [0, -1]],
             [[-1, 1], [-1, 0], [0, 0], [1, 0]],
             [[-1, -1], [0, -1], [0, 0], [0, 1]],
@@ -73,7 +74,7 @@ class Paw(Figure):
     def __init__(self, color):
         super().__init__(color)
         self.freedom_degree = 4
-        self.rel_coord_library = [
+        self.relative_coord_library = [
             [[0, -1], [0, 0], [0, 1], [-1, 0]],
             [[1, 0], [0, 0], [-1, 0], [0, -1]],
             [[0, -1], [0, 0], [0, 1], [1, 0]],
@@ -86,7 +87,7 @@ class ReverseAngle(Figure):
     def __init__(self, color):
         super().__init__(color)
         self.freedom_degree = 4
-        self.rel_coord_library = [
+        self.relative_coord_library = [
             [[-1, 1], [0, 1], [0, 0], [0, -1]],
             [[-1, -1], [-1, 0], [0, 0], [1, 0]],
             [[1, -1], [0, -1], [0, 0], [0, 1]],
@@ -99,7 +100,7 @@ class ReverseOrigami(Figure):
     def __init__(self, color):
         super().__init__(color)
         self.freedom_degree = 2
-        self.rel_coord_library = [
+        self.relative_coord_library = [
             [[1, 0], [0, 0], [0, 1], [1, -1]],
             [[1, 0], [0, 0], [0, -1], [-1, -1]],
         ]
